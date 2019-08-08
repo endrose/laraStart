@@ -21,6 +21,10 @@ window.Form = Form;
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
 
+// MOMENTS
+import moment from 'moment'
+
+// VUE ROUTER
 import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
@@ -38,8 +42,15 @@ const router = new VueRouter({
     routes
 })
 
+// FILTER
+Vue.filter('upText', function (text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+});
 
-
+// FILTER MOMENT
+Vue.filter('myDate', function(created){
+    return moment(created).format('MMMM Do YYYY');
+});
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

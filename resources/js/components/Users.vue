@@ -26,15 +26,17 @@
                   <th>Name</th>
                   <th>Email</th>
                   <th>Type</th>
+                  <th>Register At</th>
                   <th>Modify</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="user in users" :key="user.id">
                   <td>{{ user.id }}</td>
-                  <td>{{ user.name }}</td>
+                  <td>{{ user.name | upText }}</td>
                   <td>{{ user.email }}</td>
-                  <td>{{ user.type }}</td>
+                  <td>{{ user.type | upText }}</td>
+                  <td>{{ user.created_at | myDate}}</td>
                   <td>
                     <a href="#">
                       <i class="fas fa-edit"></i>
