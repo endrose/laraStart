@@ -30,14 +30,20 @@
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>183</td>
-                  <td>John Doe</td>
-                  <td>11-7-2014</td>
+                <tr v-for="user in users" :key="user.id">
+                  <td>{{ user.id }}</td>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.email }}</td>
+                  <td>{{ user.type }}</td>
                   <td>
-                    <span class="tag tag-success">Approved</span>
+                    <a href="#">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    /
+                    <a href="#">
+                      <i class="fas fa-trash red"></i>
+                    </a>
                   </td>
-                  <td>Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.</td>
                 </tr>
               </tbody>
             </table>
@@ -54,7 +60,7 @@
           aria-labelledby="exampleModalLabel"
           aria-hidden="true"
         >
-          <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-dialog" role="document" id="addNewModal">
             <div class="modal-content">
               <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Add New</h5>
@@ -143,6 +149,7 @@
 export default {
   data() {
     return {
+      users: {},
       form: new Form({
         name: "",
         email: "",
@@ -154,12 +161,18 @@ export default {
     };
   },
   methods: {
+    loadUsers() {
+      axios.get("api/user").then(({ data }) => (this.users = data.data));
+    },
     createUser() {
-      this.form.post('api/user');
+      this.form.post("api/user");
+      //   this.form.post("api/user").then(({ data }) => {
+      //     console.log(data);
+      //   });
     }
   },
-  mounted() {
-    console.log("Component mounted.");
+  created() {
+    this.loadUsers();
   }
 };
 </script>
