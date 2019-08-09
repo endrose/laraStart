@@ -16,7 +16,6 @@ import {
     AlertError
 } from 'vform'
 
-
 // SWEETALERT2
 import swal from 'sweetalert2'
 window.swal = swal;

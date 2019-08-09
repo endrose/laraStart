@@ -166,19 +166,17 @@ export default {
     loadUser() {
       this.$Progress.start();
       axios.get("api/user").then(({ data }) => (this.users = data.data));
-
       this.$Progress.finish();
     },
 
     createUser() {
       this.$Progress.start();
       this.form.post("api/user");
-      $("#addNew").modal("hide");
       toast.fire({
-        type: "success",
-        title: "User Created in successfully"
-      });
-
+          type: 'success',
+          title: 'User Created in successfully '
+      })
+      $("#addNew").modal("hide");
       this.$Progress.finish();
       //   this.form.post("api/user").then(({ data }) => {
       //     console.log(data);
