@@ -37,12 +37,12 @@
                   <td>{{ user.email }}</td>
                   <td>{{ user.type | upText }}</td>
                   <td>{{ user.created_at | myDate}}</td>
-                  <td>
+                  <td></td>
                     <a href="#">
                       <i class="fas fa-edit"></i>
                     </a>
                     /
-                    <a href="#">
+                    <a href="#" @click="deleteUser(user.id)">
                       <i class="fas fa-trash red"></i>
                     </a>
                   </td>
@@ -163,6 +163,35 @@ export default {
     }
   },
   methods: {
+    deleteUser(id){
+        swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            
+            // send request to server
+            if (result.value) {
+                this.form.delete("api/user/" + id).then(() => {
+                    swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )   
+                Fire.$emit("afterCreate");
+                    
+                }).catch( () => {
+                    swal.fire("failed","There was something wrong.","warning");
+                    this.$Progress.fail();
+                });
+                
+            }
+        })
+    },
     loadUser() {
       this.$Progress.start();
       axios.get("api/user").then(({ data }) => (this.users = data.data));
@@ -196,7 +225,6 @@ export default {
     Fire.$on("afterCreate", () => {
         this.loadUser()
     });
-
     // setInterval(() => this.loadUser(), 3000);
   }
 };
