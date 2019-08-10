@@ -1955,25 +1955,32 @@ __webpack_require__.r(__webpack_exports__);
       this.$Progress.finish();
     },
     createUser: function createUser() {
+      var _this2 = this;
+
       this.$Progress.start();
-      this.form.post("api/user");
-      Fire.$emit("afterCreate");
-      toast.fire({
-        type: "success",
-        title: "User Create in successfully"
+      this.form.post("api/user").then(function () {
+        Fire.$emit("afterCreate");
+        toast.fire({
+          type: "success",
+          title: "User Create in successfully"
+        });
+        $("#addNew").modal("hide");
+
+        _this2.$Progress.finish(); //   this.form.post("api/user").then(({ data }) => {
+        //     console.log(data);
+        //   });
+
+      })["catch"](function () {
+        _this2.$Progress.fail(data);
       });
-      $("#addNew").modal("hide");
-      this.$Progress.finish(); //   this.form.post("api/user").then(({ data }) => {
-      //     console.log(data);
-      //   });
     }
   },
   created: function created() {
-    var _this2 = this;
+    var _this3 = this;
 
     this.loadUser();
     Fire.$on("afterCreate", function () {
-      _this2.loadUser();
+      _this3.loadUser();
     }); // setInterval(() => this.loadUser(), 3000);
   }
 });
