@@ -26,8 +26,16 @@ const toast = swal.mixin({
     showConfirmButton: false,
     timer: 3000
 })
-
 window.toast = toast;
+
+// PROGRESS BAR
+import VueProgressBar from 'vue-progressbar'
+Vue.use(VueProgressBar, {
+    color: 'rgb(38, 117, 221)',
+    failedColor: 'red',
+    height: '2px'
+})
+
 
 window.Form = Form;
 Vue.component(HasError.name, HasError)
@@ -37,20 +45,11 @@ Vue.component(AlertError.name, AlertError)
 import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
-// PROGRESS BAR
-import VueProgressBar from 'vue-progressbar'
-
-Vue.use(VueProgressBar, {
-    color: 'rgb(143,255,199)',
-    failedColor: 'red',
-    height: '3px'
-
-
-})
 
 // MOMENTS
 import moment from 'moment'
 
+window.Fire = new Vue();
 
 
 let routes = [{
@@ -75,6 +74,10 @@ Vue.filter('upText', function (text) {
 Vue.filter('myDate', function (created) {
     return moment(created).format('MMMM Do YYYY');
 });
+
+// CUSTOM EVENT SEND HTTP REQUEST
+window.Fire = new Vue();
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

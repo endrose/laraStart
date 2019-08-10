@@ -172,10 +172,12 @@ export default {
     createUser() {
       this.$Progress.start();
       this.form.post("api/user");
+      Fire.$emit("afterCreate");
       toast.fire({
-          type: 'success',
-          title: 'User Created in successfully '
-      })
+        type: "success",
+        title: "User Create in successfully"
+      });
+
       $("#addNew").modal("hide");
       this.$Progress.finish();
       //   this.form.post("api/user").then(({ data }) => {
@@ -185,6 +187,11 @@ export default {
   },
   created() {
     this.loadUser();
+    Fire.$on("afterCreate", () => {
+        this.loadUser()
+    });
+
+    // setInterval(() => this.loadUser(), 3000);
   }
 };
 </script>
