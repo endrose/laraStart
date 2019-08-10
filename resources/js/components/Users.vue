@@ -160,7 +160,7 @@ export default {
         type: "",
         photo: ""
       })
-    };
+    }
   },
   methods: {
     loadUser() {
