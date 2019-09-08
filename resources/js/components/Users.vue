@@ -7,13 +7,9 @@
             <h3 class="card-title">Users Table</h3>
 
             <div class="card-tools">
-              <button
-                type="submit"
-                class="btn btn-success"
-                data-toggle="modal"
-                data-target="#addNew"
-              >
-                <i class="fas fa-user"></i>Add New
+              <button type="submit" class="btn btn-success" @click="newModal">
+                <i class="fas fa-user"></i>
+                Add New
               </button>
             </div>
           </div>
@@ -37,12 +33,11 @@
                   <td>{{ user.email }}</td>
                   <td>{{ user.type | upText }}</td>
                   <td>{{ user.created_at | myDate}}</td>
-                  <td></td>
-                    <a href="#">
-                      <i class="fas fa-edit"></i>
-                    </a>
-                    /
-                    <a href="#" @click="deleteUser(user.id)">
+                  <td>
+                    <a @click="editModal(user)">
+                      <i class="fas fa-edit blue"></i>
+                    </a> /
+                    <a @click="deleteUser(user.id)">
                       <i class="fas fa-trash red"></i>
                     </a>
                   </td>
@@ -65,13 +60,15 @@
           <div class="modal-dialog" role="document" id="addNewModal">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add New</h5>
+                <h5 class="modal-title" v-show="!editMode" id="exampleModalLabel">Add New</h5>
+                <h5 class="modal-title" v-show="editMode" id="exampleModalLabel">Update User</h5>
+
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                <form role="form" @submit.prevent="createUser">
+                <form role="form" @submit.prevent="editMode ? updateUser () : createUser()">
                   <div class="form-group">
                     <input
                       v-model="form.name"
@@ -135,7 +132,8 @@
 
                   <div class="modal-footer">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Create</button>
+                    <button type="submit" v-show="!editMode" class="btn btn-success">Create</button>
+                    <button type="submit" v-show="editMode" class="btn btn-primary">Update</button>
                   </div>
                 </form>
               </div>
@@ -151,8 +149,10 @@
 export default {
   data() {
     return {
+      editMode: false,
       users: {},
       form: new Form({
+        id: "",
         name: "",
         email: "",
         password: "",
@@ -160,37 +160,68 @@ export default {
         type: "",
         photo: ""
       })
-    }
+    };
   },
   methods: {
-    deleteUser(id){
-        swal.fire({
-        title: 'Are you sure?',
-        text: "You won't be able to revert this!",
-        type: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            
-            // send request to server
-            if (result.value) {
-                this.form.delete("api/user/" + id).then(() => {
-                    swal.fire(
-                        'Deleted!',
-                        'Your file has been deleted.',
-                        'success'
-                    )   
-                Fire.$emit("afterCreate");
-                    
-                }).catch( () => {
-                    swal.fire("failed","There was something wrong.","warning");
-                    this.$Progress.fail();
-                });
-                
-            }
+    updateUser() {
+      //
+      this.$Progress.start();
+      this.form
+        .put("api/user/" + this.form.id)
+        .then(() => {
+          this.$Progress.finish();
+          swal.fire("update", "User has been updated.", "success");
+          $("#addNew").modal("hide");
+          Fire.$emit("afterCreate");
         })
+        .catch(() => {
+          //   fail
+          this.$Progress.fail();
+          swal.fire("failed!", "Maybe get wrong!", "error");
+        });
+    },
+    editModal(user) {
+      this.editMode = true;
+      this.form.reset();
+      $("#addNew").modal({
+        show: true,
+        backdrop: "static"
+      });
+      this.form.fill(user);
+    },
+    newModal() {
+      this.editMode = false;
+      $("#addNew").modal({
+        show: true,
+        backdrop: "static"
+      });
+    },
+    deleteUser(id) {
+      swal
+        .fire({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, delete it!"
+        })
+        .then(result => {
+          // send request to server
+          if (result.value) {
+            this.form
+              .delete("api/user/" + id)
+              .then(() => {
+                swal.fire("Deleted!", "Your file has been deleted.", "success");
+                Fire.$emit("afterCreate");
+              })
+              .catch(() => {
+                swal.fire("failed", "There was something wrong.", "warning");
+                this.$Progress.fail();
+              });
+          }
+        });
     },
     loadUser() {
       this.$Progress.start();
@@ -200,8 +231,9 @@ export default {
 
     createUser() {
       this.$Progress.start();
-      this.form.post("api/user")
-      .then(() => {
+      this.form
+        .post("api/user")
+        .then(() => {
           Fire.$emit("afterCreate");
           toast.fire({
             type: "success",
@@ -213,17 +245,16 @@ export default {
           //   this.form.post("api/user").then(({ data }) => {
           //     console.log(data);
           //   });
-
-      } )
-      .catch(() => {
+        })
+        .catch(() => {
           this.$Progress.fail(data);
-      });
+        });
     }
   },
   created() {
     this.loadUser();
     Fire.$on("afterCreate", () => {
-        this.loadUser()
+      this.loadUser();
     });
     // setInterval(() => this.loadUser(), 3000);
   }

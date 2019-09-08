@@ -94,8 +94,8 @@
               </li>
               <li class="nav-item">
                 <router-link to="/users" class="nav-link">
-                  <i class="fas fa-circle nav-icon"></i>
-                  <p>Inactive Page</p>
+                  <i class="fas fa-users nav-icon"></i>
+                  <p>Profile</p>
                 </router-link>
               </li>
             </ul>
